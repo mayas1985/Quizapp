@@ -1,0 +1,91 @@
+"use strict";
+var AWS = require('aws-sdk');
+const _ = require('lodash');
+const jwt = require('jsonwebtoken');
+
+
+// Get "User" Dynamo table name.  Replace DEFAULT_VALUE 
+// with the actual table name from your stack.
+const UserDBArn = process.env['User_DB'] || 'DEFAULT_VALUE';  //'Mark-UserTable-1234567';
+const UserDBArnArr = UserDBArn.split('/');
+const UserTableName = UserDBArnArr[UserDBArnArr.length - 1];
+
+// handleHttpRequest is the entry point for Lambda requests
+exports.handleHttpRequest = function(request, context, done) {
+  try {
+   
+    let response = {
+        headers: {
+        "Access-Control-Allow-Origin": "*", // Required for CORS support to work
+        "Access-Control-Allow-Headers": "content-type,origin,text,startlower",
+        "Access-Control-Allow-Methods": "GET, OPTIONS, POST",
+        "content-type": "text/plain",
+        "Access-Control-Allow-Credentials": true // Required for cookies, authorization headers with HTTPS
+      },
+      body: '',
+      statusCode: 200
+    };
+
+    switch (request.httpMethod) {
+     case 'OPTIONS':
+       done(null, response);  
+       break;
+      case 'POST': {
+        console.log('POST');
+        
+        let bodyJSON = JSON.parse(request.body || '{}');
+        var password = bodyJSON["password"];
+         var userId =bodyJSON["userId"];
+        if(!password)
+        {
+               response.body = "password required";
+              response.statusCode = 400;
+              done(null, response);  
+              return;
+          
+        } 
+        else if(!userId)
+        {
+               response.body = "userId required";
+              response.statusCode = 400;
+              done(null, response);  
+              return;
+          
+        } 
+        else{
+        
+            var docClient = new AWS.DynamoDB.DocumentClient();
+            var params = {
+              TableName: UserTableName,
+              Key: { 'user_id' : userId  }
+            };
+            // Call DynamoDB to read the item from the table
+            docClient.get(params, function(err, data) {
+              if (err) {
+                  console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
+              } else {
+                  
+                  if(password == data.Item.password){
+                    const token = jwt.sign({ userId }, "SshKoiHai", { expiresIn: 2400 });
+                    response.body =  JSON.stringify({
+                                                      token,
+                                                    });
+                    response.statusCode = 200;
+                    done(null, response);
+                  }else{
+                    
+                     response.body = "invalid creds";
+                    response.statusCode = 401;
+                    done(null, response); 
+                  }
+                done(null, response)
+              }
+             });
+        }
+        break;
+      }
+    }
+  } catch (e) {
+    done(e, null);
+  }
+}

@@ -13,12 +13,21 @@ exports.handleHttpRequest = function(request, context, done) {
   try {
     const userId = request.pathParameters.userId;
     let response = {
-      headers: {},
+       headers: {
+        "Access-Control-Allow-Origin": "*", // Required for CORS support to work
+        "Access-Control-Allow-Headers": "content-type,origin,text,startlower",
+        "Access-Control-Allow-Methods": "GET, OPTIONS, POST",
+        "content-type": "text/plain",
+        "Access-Control-Allow-Credentials": true // Required for cookies, authorization headers with HTTPS
+      },
       body: '',
       statusCode: 200
     };
 
     switch (request.httpMethod) {
+      case 'OPTIONS':
+       done(null, response);  
+       break;
       case 'GET': {
         console.log('GET');
         let dynamo = new AWS.DynamoDB();
@@ -41,6 +50,7 @@ exports.handleHttpRequest = function(request, context, done) {
       }
       case 'POST': {
         console.log('POST');
+        
         let bodyJSON = JSON.parse(request.body || '{}');
         let dynamo = new AWS.DynamoDB();
         // check alrady exists

@@ -1,27 +1,20 @@
-# QuizApp
+# Quizapp
+## Serverless Architecture
+ Quizapp truely rely on AWS Serverless architecture to store and retrieve data. 
+ Angular app calls AWS API Gateway which in turn calls lambda which acts as a api host and is highly scalable. 
+ Lambda authenticate user with JWT tokens and calls dynomo db to retrieve data for authenticated users.
+### CloudFormation
+  Cloudformation eases the work of deployment with standard aws template to create all required resources such as api gateway, lambda and even Dyanamo db tables.
+  
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 7.2.2.
+### Api Gateway
+  API Gateway acts as a entry point where angular app can communicate.
 
-## Development server
+### Lambda
+  Lambda acts as an api host and do all the serverless processing for the request being served with right authentication and authorization.
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+### dyanamo db
+  holds no sql data for frontend angular app.
 
-## Code scaffolding
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
-
-## Build
-
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+![diagram](https://github.com/mayas1985/Quizapp/blob/master/diagram.jpg?raw=true)

@@ -2,7 +2,7 @@ import { NgModule }      from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { ReactiveFormsModule }    from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-
+import { SurveyComponent } from './home//survey.component';
 // used to create fake backend
 import { fakeBackendProvider } from './_helpers';
 
@@ -16,6 +16,7 @@ import { AlertService, AuthenticationService, UserService } from './_services';
 import { HomeComponent } from './home';
 import { LoginComponent } from './login';
 import { RegisterComponent } from './register';
+import { QuestionnaireService } from './_services/questionnaire.service';
 
 @NgModule({
     imports: [
@@ -29,7 +30,8 @@ import { RegisterComponent } from './register';
         AlertComponent,
         HomeComponent,
         LoginComponent,
-        RegisterComponent
+        RegisterComponent,
+        SurveyComponent
     ],
     providers: [
         AuthGuard,
@@ -38,7 +40,7 @@ import { RegisterComponent } from './register';
         UserService,
         { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
         { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
-
+        QuestionnaireService,
         // provider used to create fake backend
         fakeBackendProvider
     ],

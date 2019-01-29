@@ -22,7 +22,27 @@
               "src/favicon.ico",
               "src/assets"
             ],
-            "styles": [],
+            "styles": [ "styles.css",
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "node_modules/survey-angular/survey.css",
+              "node_modules/surveyjs-editor/surveyeditor.css",
+              "node_modules/jquery-ui/themes/base/theme.css",
+              "node_modules/jquery-ui/themes/base/datepicker.css",
+              "node_modules/nouislider/distribute/nouislider.css",
+              "node_modules/select2/dist/css/select2.css",
+              "node_modules/pretty-checkbox/dist/pretty-checkbox.css",
+              "node_modules/bootstrap-slider/dist/css/bootstrap-slider.css",
+              "node_modules/jquery-bar-rating/dist/themes/bars-pill.css",
+              "node_modules/jquery-bar-rating/dist/themes/css-stars.css",
+              "node_modules/jquery-bar-rating/dist/themes/fontawesome-stars.css",
+              "node_modules/jquery-bar-rating/dist/themes/bars-1to10.css",
+              "node_modules/jquery-bar-rating/dist/themes/bars-horizontal.css",
+              "node_modules/jquery-bar-rating/dist/themes/bars-movie.css",
+              "node_modules/jquery-bar-rating/dist/themes/bars-reversed.css",
+              "node_modules/jquery-bar-rating/dist/themes/bars-square.css",
+              "node_modules/jquery-bar-rating/dist/themes/bootstrap-stars.css",
+              "node_modules/jquery-bar-rating/dist/themes/fontawesome-stars-o.css"
+              ],
             "scripts": []
           },
           "configurations": {
@@ -77,7 +97,10 @@
             "tsConfig": "src/tsconfig.spec.json",
             "karmaConfig": "src/karma.conf.js",
             "styles": [
-              "src/styles.css"
+              "src/styles.css",
+              "../node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "../node_modules/survey-angular/survey.css",
+              "../node_modules/surveyjs-editor/surveyeditor.css"
             ],
             "scripts": [],
             "assets": [

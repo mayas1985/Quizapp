@@ -270,8 +270,61 @@
                       
                         }
                     
-                        
-                    },
+                        ,
+						"questionnaire":{
+							"get": {
+                                "description": "TBD",
+                                "x-amazon-apigateway-integration": {
+                                    "uri": {
+                                        "Fn::Sub": "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${QuestionnaireLambda.Arn}/invocations"
+                                    },
+                                    "credentials": {
+                                        "Fn::GetAtt": [
+                                            "MyApiGatewayRole",
+                                            "Arn"
+                                        ]
+                                    },
+                                    "passthroughBehavior": "when_no_match",
+                                    "httpMethod": "POST",
+                                    "type": "aws_proxy"
+                                },
+                                "operationId": "getUser",
+                                "parameters": [
+                                    {
+                                        "name": "QuestionnaireId",
+                                        "in": "path",
+                                        "description": "TBD",
+                                        "required": true,
+                                        "type": "string",
+                                        "format": "uuid"
+                                    }
+                                ]
+                            },
+							"options": {
+                                "description": "TBD",
+                                "x-amazon-apigateway-integration": {
+                                    "uri": {
+                                        "Fn::Sub": "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${UserLambda.Arn}/invocations"
+                                    },
+                                    "credentials": {
+                                        "Fn::GetAtt": [
+                                            "MyApiGatewayRole",
+                                            "Arn"
+                                        ]
+                                    },
+                                    "passthroughBehavior": "when_no_match",
+                                    "httpMethod": "POST",
+                                    "type": "aws_proxy"
+                                },
+                                "operationId": "optionUser",
+                                "parameters": [
+                                   
+                                ]
+                            }
+                           
+						}
+					
+					},
 					"cors": true
                 }
             }
@@ -347,6 +400,29 @@
                     "Variables": {
                         "User_DB": {
                             "Fn::Sub": "arn:aws:dynamodb:${AWS::Region}:*:table/${UserTable}"
+                        }
+                    }
+                },
+                "Code": {
+                    "ZipFile": "exports.handlers = function(event, context) {}\n"
+                }
+            }
+        },
+		"QuestionnaireLambda": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+                "Role": {
+                    "Fn::GetAtt": [
+                        "UserLambdaRole",
+                        "Arn"
+                    ]
+                },
+                "Handler": "index.handleHttpRequest",
+                "Runtime": "nodejs6.10",
+                "Environment": {
+                    "Variables": {
+                        "QuestionnaireTable_DB": {
+                            "Fn::Sub": "arn:aws:dynamodb:${AWS::Region}:*:table/${QuestionnaireTable}"
                         }
                     }
                 },

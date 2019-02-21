@@ -271,7 +271,7 @@
                         }
                     
                         ,
-						"questionnaire":{
+						"questionnaires/{questionnaireId}/questionnaire":{
 							"get": {
                                 "description": "TBD",
                                 "x-amazon-apigateway-integration": {
@@ -374,6 +374,12 @@
 										{
                                             "Fn::GetAtt": [
                                                 "LoginLambda",
+                                                "Arn"
+                                            ]
+                                        },
+										{
+                                            "Fn::GetAtt": [
+                                                "QuestionnaireLambda",
                                                 "Arn"
                                             ]
                                         }

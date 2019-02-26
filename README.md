@@ -1,6 +1,6 @@
-# Quizapp
+# Encuesta
 ## Serverless Architecture
- Quizapp truely rely on AWS Serverless architecture to store and retrieve data. 
+ Encuesta truely rely on AWS Serverless architecture to store and retrieve data. 
  Angular app calls AWS API Gateway which in turn calls lambda which acts as a api host and is highly scalable. 
  Lambda authenticate user with JWT tokens and calls dynomo db to retrieve data for authenticated users.
 ### CloudFormation
@@ -17,4 +17,4 @@
   holds no sql data for frontend angular app.
 
 
-![diagram](https://github.com/mayas1985/Quizapp/blob/master/diagram.jpg?raw=true)
+![diagram](https://github.com/mayas1985/Encuesta/blob/master/diagram.jpg?raw=true)

@@ -3,6 +3,11 @@
 const UserDBArn = process.env['QuestionnaireTable_DB'] || 'DEFAULT_VALUE';  //'Mark-UserTable-1234567';
 const UserDBArnArr = UserDBArn.split('/');
 const UserTableName = UserDBArnArr[UserDBArnArr.length - 1];
+var nodemailer = require('nodemailer');
+const AWS = require("aws-sdk");
+var ses = new AWS.SES({
+   region: 'us-east-1'
+});
 
 // handleHttpRequest is the entry point for Lambda requests
 exports.handleHttpRequest = function(request, context, done) {
@@ -11,7 +16,7 @@ exports.handleHttpRequest = function(request, context, done) {
     let response = {
        headers: {
         "Access-Control-Allow-Origin": "*", // Required for CORS support to work
-        "Access-Control-Allow-Headers": "content-type,origin,text,startlower",
+        "Access-Control-Allow-Headers": "*",
         "Access-Control-Allow-Methods": "GET, OPTIONS, POST",
         "content-type": "text/plain",
         "Access-Control-Allow-Credentials": true // Required for cookies, authorization headers with HTTPS
@@ -34,47 +39,42 @@ exports.handleHttpRequest = function(request, context, done) {
         console.log('POST');
         
         let bodyJSON = JSON.parse(request.body || '{}');
-        let dynamo = new AWS.DynamoDB();
-        // check alrady exists
-        var paramsGet = {
-          TableName: UserTableName,
-          Key: { 'user_id' : { S: userId } },
-          ProjectionExpression: 'email'
-        };
-        // Call DynamoDB to read the item from the table
-        dynamo.getItem(paramsGet, function(err, data) {
-          if (err) {
-            console.log("Error", err);
-            throw `Dynamo Get Error (${err})`
-          } else {
-            
-            if(data && data.Item)
-            {
-              response.body = "already exists";
-              response.statusCode = 400;
-              done(null, response);
-            }
-            else{
-              // insert 
-              let params = {
-                TableName: UserTableName,
-                Item: {
-                  'user_id': { S: userId },
-                  'email': { S: bodyJSON['email'] },
-                  'password' : { S: bodyJSON['password'] }
-                  
-                }
-              };
-              dynamo.putItem(params, function(error, data) {
-                if (error) throw `Dynamo Error (${error})`;
-                else done(null, response);
-              })
-              
-            }
-            
-          }
-        });
+         
+          
+                 var eParams = {
+                Destination: {
+                    ToAddresses: ["ajain3@xpanxion.com"]
+                },
+                Message: {
+                    Body: {
+                        Text: {
+                            Data: "Hey! We got ur response and will get back to you soon with response"
+                        }
+                    },
+                    Subject: {
+                        Data: "Quiz App submission"
+                    }
+                },
+                Source: "mmadhavan@xpanxion.com"
+            };
         
+            console.log('===SENDING EMAIL===');
+            var email = ses.sendEmail(eParams, function(err, data){
+                if(err) console.log(err);
+                else {
+                    console.log("===EMAIL SENT===");
+                    console.log(data);
+        
+        
+                    console.log("EMAIL CODE END");
+                    console.log('EMAIL: ', email);
+                    
+                    done(null, response);
+        
+                }
+            });
+            console.log(bodyJSON);
+               
         break;
       }
     }

@@ -304,7 +304,70 @@
                                 "description": "TBD",
                                 "x-amazon-apigateway-integration": {
                                     "uri": {
-                                        "Fn::Sub": "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${UserLambda.Arn}/invocations"
+                                        "Fn::Sub": "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${QuestionnaireLambda.Arn}/invocations"
+                                    },
+                                    "credentials": {
+                                        "Fn::GetAtt": [
+                                            "MyApiGatewayRole",
+                                            "Arn"
+                                        ]
+                                    },
+                                    "passthroughBehavior": "when_no_match",
+                                    "httpMethod": "POST",
+                                    "type": "aws_proxy"
+                                },
+                                "operationId": "optionUser",
+                                "parameters": [
+                                   
+                                ]
+                            }
+                           
+						},
+						"answers/{userId}/answer":{
+							 "post": {
+                                "description": "TBD",
+                                "x-amazon-apigateway-integration": {
+                                    "uri": {
+                                        "Fn::Sub": "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${QuestionnaireLambda.Arn}/invocations"
+                                    },
+                                    "credentials": {
+                                        "Fn::GetAtt": [
+                                            "MyApiGatewayRole",
+                                            "Arn"
+                                        ]
+                                    },
+                                    "passthroughBehavior": "when_no_match",
+                                    "httpMethod": "POST",
+                                    "type": "aws_proxy"
+                                },
+                                "operationId": "postAnswer",
+                                "parameters": [
+                                    {
+                                        "name": "userId",
+                                        "in": "path",
+                                        "description": "TBD",
+                                        "required": true,
+                                        "type": "string",
+                                        "format": "uuid"
+                                    },
+                                    {
+                                        "name": "body",
+                                        "in": "body",
+                                        "description": "TBD",
+                                        "required": true,
+										"schema": {
+                                            "type": "object"
+                                           
+                                        }
+                                        
+                                    }
+                                ]
+                            },
+							"options": {
+                                "description": "TBD",
+                                "x-amazon-apigateway-integration": {
+                                    "uri": {
+                                        "Fn::Sub": "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${QuestionnaireLambda.Arn}/invocations"
                                     },
                                     "credentials": {
                                         "Fn::GetAtt": [
@@ -510,6 +573,25 @@
                                     ],
                                     "Resource": {
                                         "Fn::Sub": "arn:aws:dynamodb:${AWS::Region}:*:table/${UserTable}"
+                                    }
+                                }
+                            ]
+                        }
+                    },
+					{
+                        "PolicyName": "postAnswer",
+                        "PolicyDocument": {
+                            "Version": "2012-10-17",
+                            "Statement": [
+                                {
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "dynamodb:PutItem",
+										 "ses:SendEmail",
+											"ses:SendRawEmail"
+                                    ],
+                                    "Resource": {
+                                        "Fn::Sub": "*"
                                     }
                                 }
                             ]

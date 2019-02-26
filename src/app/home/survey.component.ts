@@ -1,4 +1,4 @@
-import { Component, Input, EventEmitter, Output, OnInit } from '@angular/core';
+import { Component, Input, EventEmitter, Output, OnInit, SimpleChanges, SimpleChange, OnChanges } from '@angular/core';
 import * as Survey from 'survey-angular';
 import * as widgets from 'surveyjs-widgets';
 
@@ -26,11 +26,11 @@ Survey.JsonObject.metaData.addProperty('page', 'popupdescription:text');
   selector: 'survey',
   template: `<div class='survey-container contentcontainer codecontainer'><div id='surveyElement'></div></div>`
 })
-export class SurveyComponent implements OnInit {
+export class SurveyComponent implements OnInit, OnChanges {
   @Output() submitSurvey = new EventEmitter<any>();
 
   @Input()
-  json: object;
+  inputJson: {};
 
 
   click(result) {
@@ -38,8 +38,13 @@ export class SurveyComponent implements OnInit {
 
   }
 
-  ngOnInit() {
-    const surveyModel = new Survey.Model(this.json);
+  ngOnChanges(changes: SimpleChanges) {
+    // const name: SimpleChange = changes.name;
+    // console.log('prev value: ', name.previousValue);
+    // console.log('got name: ', name.currentValue);
+    this.inputJson = changes.inputJson.currentValue;
+ 
+    const surveyModel = new Survey.Model(this.inputJson);
     surveyModel.onAfterRenderQuestion.add((survey, options) => {
       if (!options.question.popupdescription) { return; }
 
@@ -63,5 +68,8 @@ export class SurveyComponent implements OnInit {
         this.submitSurvey.emit(result.data)
       );
     Survey.SurveyNG.render('surveyElement', { model: surveyModel });
+  }
+
+  ngOnInit() {
   }
 }

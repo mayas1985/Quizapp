@@ -13,7 +13,8 @@ export class HomeComponent implements OnInit {
     users: User[] = [];
     json: any = {};
     constructor(private userService: UserService,
-        private questionnaireService: QuestionnaireService) {
+        private questionnaireService: QuestionnaireService,
+        private alertService: AlertService) {
         this.currentUser = JSON.parse(localStorage.getItem("currentUser"));
     }
 
@@ -27,11 +28,13 @@ export class HomeComponent implements OnInit {
             this.loadAllUsers();
         });
     }
+
     loadQuestions(): any {
         this.questionnaireService.getQuestionnaire(1).subscribe(
             res => {
-                this.json = res.body;
-                console.log(res.body);
+                this.json = res;
+                console.log(res);
+                // return res;
             },
             (error) => {
                 console.log(error);
@@ -42,5 +45,15 @@ export class HomeComponent implements OnInit {
         this.userService.getAll().pipe(first()).subscribe(users => {
             this.users = users;
         });
+    }
+    sendData(event): any {
+        //this.alertService.error(event);
+        //save this data to database
+        this.questionnaireService.savequestionnaireAndSendEmail(event).pipe(first()).subscribe(response => {
+           
+                this.alertService.success("Submitted Successfully, You will get an confirmation email soon.");
+            
+        });
+
     }
 }

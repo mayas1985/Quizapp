@@ -1,11 +1,10 @@
 <h1>QuizApp</h1>
-
-<survey [json]="json" (submitSurvey)="sendData($event)"></survey>
-
+<div>
+    <survey [inputJson]="json" (submitSurvey)="sendData($event)"></survey>
+</div>
 <ul>
     <li *ngFor="let user of users">
-        {{user.username}} ({{user.firstName}} {{user.lastName}})
-        - <a (click)="deleteUser(user.id)" class="text-danger">Delete</a>
+        {{user.username}} ({{user.firstName}} {{user.lastName}}) - <a (click)="deleteUser(user.id)" class="text-danger">Delete</a>
     </li>
 </ul>
 <p><a [routerLink]="['/login']">Logout</a></p>

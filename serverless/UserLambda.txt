@@ -13,9 +13,9 @@ exports.handleHttpRequest = function(request, context, done) {
   try {
     const userId = request.pathParameters.userId;
     let response = {
-       headers: {
+      headers: {
         "Access-Control-Allow-Origin": "*", // Required for CORS support to work
-        "Access-Control-Allow-Headers": "content-type,origin,text,startlower",
+        "Access-Control-Allow-Headers": "*",
         "Access-Control-Allow-Methods": "GET, OPTIONS, POST",
         "content-type": "text/plain",
         "Access-Control-Allow-Credentials": true // Required for cookies, authorization headers with HTTPS
@@ -25,74 +25,46 @@ exports.handleHttpRequest = function(request, context, done) {
     };
 
     switch (request.httpMethod) {
-      case 'OPTIONS':
+       case 'OPTIONS':
        done(null, response);  
        break;
       case 'GET': {
         console.log('GET');
         let dynamo = new AWS.DynamoDB();
-        var docClient = new AWS.DynamoDB.DocumentClient();
         var params = {
-          TableName: UserTableName,
-          Key: { 'user_id' : userId  }
-        };
-        // Call DynamoDB to read the item from the table
-        docClient.get(params, function(err, data) {
-          if (err) {
-              console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
-          } else {
-              console.log("GetItem succeeded:", JSON.stringify(data, null, 2));
-              response.body = JSON.stringify(data.Item);
-            done(null, response)
-          }
-         });
-        break;
-      }
-      case 'POST': {
-        console.log('POST');
-        
-        let bodyJSON = JSON.parse(request.body || '{}');
-        let dynamo = new AWS.DynamoDB();
-        // check alrady exists
-        var paramsGet = {
           TableName: UserTableName,
           Key: { 'user_id' : { S: userId } },
           ProjectionExpression: 'email'
         };
         // Call DynamoDB to read the item from the table
-        dynamo.getItem(paramsGet, function(err, data) {
+        dynamo.getItem(params, function(err, data) {
           if (err) {
             console.log("Error", err);
             throw `Dynamo Get Error (${err})`
           } else {
-            
-            if(data && data.Item)
-            {
-              response.body = "already exists";
-              response.statusCode = 400;
-              done(null, response);
-            }
-            else{
-              // insert 
-              let params = {
-                TableName: UserTableName,
-                Item: {
-                  'user_id': { S: userId },
-                  'email': { S: bodyJSON['email'] },
-                  'password' : { S: bodyJSON['password'] }
-                  
-                }
-              };
-              dynamo.putItem(params, function(error, data) {
-                if (error) throw `Dynamo Error (${error})`;
-                else done(null, response);
-              })
-              
-            }
-            
+            console.log("Success", data.Item.email);
+            response.body = JSON.stringify(data.Item.email);
+            done(null, response);
           }
         });
-        
+        break;
+      }
+      case 'POST': {
+        console.log('POST');
+        let bodyJSON = JSON.parse(request.body || '{}');
+        let dynamo = new AWS.DynamoDB();
+        let params = {
+          TableName: UserTableName,
+          Item: {
+            'user_id': { S: userId },
+            'email': { S: bodyJSON['email'] },
+            'password':{S: bodyJSON['password']}
+          }
+        };
+        dynamo.putItem(params, function(error, data) {
+          if (error) throw `Dynamo Error (${error})`;
+          else done(null, response);
+        })
         break;
       }
     }

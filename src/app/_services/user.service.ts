@@ -16,7 +16,7 @@ export class UserService {
     }
 
     register(user: User) {
-        return this.http.post(`/users/register`, user);
+        return this.http.post(`https://rhhqhuo834.execute-api.us-east-1.amazonaws.com/prod/users/`+user.username+`/User`, user);
     }
 
     update(user: User) {
